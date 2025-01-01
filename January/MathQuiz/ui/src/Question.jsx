@@ -26,7 +26,7 @@ function Question() {
     if (isError) return <div>Error fetching data</div>;
 
     return (
-        <div className="card text-bg-info mb-3 container">
+        <div className="card text-bg-info mb-3">
             <div className="card-header">{data.subject}</div>
             <div className="card-body">
                 <p className="card-text">{data.question}</p>
