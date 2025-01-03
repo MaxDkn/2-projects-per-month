@@ -5,7 +5,7 @@ from typing import Optional, List, Literal
 from pydantic import BaseModel
 import uvicorn
 
-from questions import generate_question, verify_answer
+from cmq_questions import generate
 
 
 app = FastAPI()
@@ -34,12 +34,7 @@ class ChooseSubject(BaseModel):
 
 @app.post('/api/generate')
 async def generate_a_question(subjects: ChooseSubject):
-    return generate_question(subjects.model_dump())
-
-
-@app.post('/api/verify')
-async def verify_an_answer(question_data: QuestionData, answer: str or int or bool):
-    return verify_answer(question_data=question_data.model_dump(), answer=answer)
+    return generate(subjects.model_dump())
 
 
 if __name__ == '__main__':
