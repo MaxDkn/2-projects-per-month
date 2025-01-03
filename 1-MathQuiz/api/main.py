@@ -1,14 +1,18 @@
+from fastapi.requests import Request
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+import logging
 from typing import Optional, List, Literal
 from pydantic import BaseModel
 import uvicorn
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-from cmq_questions import generate
+from multiple_choice_quiz import generate_cmq_question
 
 
 app = FastAPI()
+logger = logging.getLogger('uvicorn.error')
 
 
 app.add_middleware(
@@ -34,7 +38,18 @@ class ChooseSubject(BaseModel):
 
 @app.post('/api/generate')
 async def generate_a_question(subjects: ChooseSubject):
-    return generate(subjects.model_dump())
+    return generate_cmq_question(subjects.model_dump())
+
+try:
+    app.mount('/static', StaticFiles(directory="../ui/build/static"), 'static')
+    templates = Jinja2Templates(directory="../ui/build")
+except Exception as e:
+    logger.warning('React App not found in the react build folder.')
+else:
+    logger.info('React App successfuly found running on ["/"]')
+    @app.get('/{rest_of_path:path}', tags=['React App'])
+    async def react_app(req: Request, rest_of_path: str):
+        return templates.TemplateResponse('index.html', {'request': req})
 
 
 if __name__ == '__main__':
