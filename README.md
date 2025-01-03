@@ -9,5 +9,5 @@ __List of projects that I want to realize during my challenge :__
 - the Knight's tour problem part1 - create a calculator game of that
 - the Knight's tour problem part2 - create algo to solve the problem
 ## January
-*(curren)t* - [__WebApp of quiz about mathematical subject__]('1- MathQuiz')
+*(current)* - [__WebApp of quiz about mathematical subject__](1-\ MathQuiz)
 
