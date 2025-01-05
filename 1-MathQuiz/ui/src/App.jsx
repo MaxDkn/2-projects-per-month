@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-const API_URL = '/api';
+const API_URL = 'http://127.0.0.1:8000/api';
 
 const shuffleArray = (array) => {
     let shuffledArray = [...array];
@@ -100,6 +100,8 @@ function App() {
                                     onClick={() => {validAnswer(index)}}
                                     style={{
                                         backgroundColor: shuffledColors[index % shuffledColors.length],
+                                        fontSize: "2rem",
+
                                     }}
                                 >
                                     {item}
@@ -112,6 +114,7 @@ function App() {
                                         onClick={() => {validAnswer(index + 1)}}
                                         style={{
                                             backgroundColor: shuffledColors[(index + 1) % shuffledColors.length],
+                                            fontSize: "2rem",
                                         }}
                                     >
                                         {data.suggested_answer[index + 1]}

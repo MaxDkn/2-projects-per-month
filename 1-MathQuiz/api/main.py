@@ -2,13 +2,13 @@ from fastapi.requests import Request
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-from typing import Optional, List, Literal
+from typing import Optional, List
 from pydantic import BaseModel
 import uvicorn
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from multiple_choice_quiz import generate_cmq_question
+from multiple_choice_quiz import generate_mcq_question
 
 
 app = FastAPI()
@@ -38,15 +38,17 @@ class ChooseSubject(BaseModel):
 
 @app.post('/api/generate')
 async def generate_a_question(subjects: ChooseSubject):
-    return generate_cmq_question(subjects.model_dump())
+    return generate_mcq_question(subjects.model_dump())
+
 
 try:
     app.mount('/static', StaticFiles(directory="../ui/build/static"), 'static')
     templates = Jinja2Templates(directory="../ui/build")
 except Exception as e:
-    logger.warning('React App not found in the react build folder.')
+    logger.warning(f'Error, cannot display react app ({e.__str__()} - {e.args}).')
 else:
     logger.info('React App successfuly found running on ["/"]')
+
     @app.get('/{rest_of_path:path}', tags=['React App'])
     async def react_app(req: Request, rest_of_path: str):
         return templates.TemplateResponse('index.html', {'request': req})

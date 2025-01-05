@@ -46,7 +46,6 @@ def decomposition_prime_factor(n: int) -> list[int]:
     :param n: number
     :type; int
     :return: returns the list of prime numbers decomposing a number (n)
-
     """
     result = []
     if n == 0:
@@ -850,11 +849,12 @@ class Trigonometry(QuestionsMCQ):
         # Select a trigonometric function and its string representation
         trigo_function = choice([(cos, 'cos'), (sin, 'sin')])
         value = choice(self.angles)
-        answer = trigo_function[0](radians(int(value[:-1])))
+        answer = round(trigo_function[0](radians(int(value[:-1]))), 3)
+        print(answer)
         if answer < 0:
-            answer = "-" + self.values_into_str[abs(round(answer, 3))]
+            answer = "-" + self.values_into_str[abs(answer)]
         else:
-            answer = self.values_into_str[round(answer, 3)]
+            answer = self.values_into_str[answer]
         #  can ask in radian
         if choice([True, False]):
             value = convert_degree_into_radian(value)
@@ -862,11 +862,11 @@ class Trigonometry(QuestionsMCQ):
         values = [answer]
         while len(values) < 4:
             fake_value = choice(self.angles)
-            fake_value = trigo_function[0](radians(int(fake_value[:-1])))
+            fake_value = round(trigo_function[0](radians(int(fake_value[:-1]))), 3)
             if fake_value < 0:
-                fake_value = "-" + self.values_into_str[abs(round(fake_value, 3))]
+                fake_value = "-" + self.values_into_str[abs(fake_value)]
             else:
-                fake_value = self.values_into_str[round(fake_value, 3)]
+                fake_value = self.values_into_str[fake_value]
             if fake_value in values:  # Avoid duplicates
                 continue
             values.append(fake_value)
@@ -947,14 +947,14 @@ class Trigonometry(QuestionsMCQ):
         for couple_value in couple_values:
             values.append(couple_value[1 - degree_or_radian])
 
-        unit_target = ('degrés', 'radians')[degree_or_radian]
+        unit_target = ('degrés', 'radians')[1 - degree_or_radian]
 
         return {'question': choice(sentences).format(value=answer, unit_target=unit_target),
                 'suggested_answer': values,
                 'index_answer': answer_index}
 
 
-def generate_cmq_question(subjects: list[str] | str = '*') -> dict:
+def generate_mcq_question(subjects: list[str] | str = '*') -> dict:
     """
     This is the main function that will be called everytime.
 
@@ -999,7 +999,7 @@ def run(number_of_questions: int | None = None, subjects: list[str] | str = '*')
 
     for _ in range(number_of_questions):
         #  Here we can choose the discipline we want to train
-        question_data = generate_cmq_question(subjects=subjects)
+        question_data = generate_mcq_question(subjects=subjects)
         print("".ljust(len(question_data['question']), "─"))
         #  Draw the question
         print(f"({question_data['subject']}) - " + question_data['question'])
@@ -1021,9 +1021,10 @@ def run(number_of_questions: int | None = None, subjects: list[str] | str = '*')
     print(f'Votre score est de {score} bonne réponse, soit {int(score / number_of_questions * 100)}% de réussite')
 
 
-def test():
-    for _ in range(50_000):
-        data = generate_cmq_question()
+def simple_test():
+    for _ in range(500):
+        data = Trigonometry().q_found_value()
+        print(data)
         try:
             assert (data.get('question') is not None and data.get('suggested_answer') is not None and
                     data.get('index_answer') is not None)
@@ -1034,4 +1035,4 @@ def test():
 
 
 if __name__ == '__main__':
-    run()
+    simple_test()
