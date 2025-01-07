@@ -740,7 +740,7 @@ class Geometry(QuestionsMCQ):
         if answer == 'rectangle':
             side = list(choice(self.pythagorean_triplet(interval)))
         else:
-            side = [randint(*interval)]
+            side: list = [randint(*interval)]
             if answer == 'équilatéral':
                 side *= 3
             else:
@@ -748,7 +748,16 @@ class Geometry(QuestionsMCQ):
                 if answer == 'isocèle':
                     side.append(choice(side))
                 else:
-                    side.append(generate_number_without_value(interval, forbidden_value=side))
+                    new_side = generate_number_without_value(interval, forbidden_value=side)
+                    side.append(new_side)
+                    side = side.sort()
+                    while side[0] ** 2 + side[1] ** 2 == side[2] ** 2:
+                        side.remove(new_side)
+
+                        new_side = generate_number_without_value(interval, forbidden_value=side)
+                        side.append(new_side)
+                        side = side.sort()
+
         a, b, c = shuffle_a_list(side)
 
         return {'question': choice(sentences).format(a=a, b=b, c=c),
