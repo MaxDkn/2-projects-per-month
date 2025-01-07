@@ -6,6 +6,6 @@
 # Ignorer les fichiers d'environnement
 **/.env
 **/.env.*
-**/dataset #  Ignorer les dataset, lourd
+**/dataset/ #  Ignorer les dataset, lourd
 # Ignorer le dossier node_modules
 **/node_modules/
