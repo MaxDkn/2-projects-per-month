@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = '/api';
+const colors = ['#CEE5D0', '#F3F0D7', '#FED2AA', '#F0C1E1'];
+const subjects = ['Arithmetic', 'Algebra', 'Trigonometry', 'Geometry']
+
 
 const shuffleArray = (array) => {
     let shuffledArray = [...array];
@@ -12,9 +15,10 @@ const shuffleArray = (array) => {
     return shuffledArray;
 };
 
+
 async function fetchData() {
     const response = await fetch(`${API_URL}/generate`, {
-        body: JSON.stringify({}),
+        body: JSON.stringify({'subjects': subjects}),
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json"
@@ -34,7 +38,6 @@ async function fetchData() {
     return { ...data, suggested_answer: transformedAnswers};
 }
 
-const colors = ['#CEE5D0', '#F3F0D7', '#FED2AA', '#F0C1E1'];
 
 function App() {
     const {data, isError, isLoading, refetch} = useQuery(['generate'], fetchData);
@@ -45,33 +48,35 @@ function App() {
     function validAnswer(index) {
         if (index !== data.index_answer) {
             setPopupMessage(`Vous vous êtes trompé, la bonne réponse était ${data.suggested_answer[data.index_answer]}`);
-            setShowPopup(true);
+            setShowPopup(true)
+        } else {
+            refetch()
         }
-        refetch();
     }
 
     const closePopup = () => {
         setShowPopup(false);
+        refetch();
     };
 
     useEffect(() => {
         setShuffledColors(shuffleArray(colors));
     }, [data]);
 
-    if (isError) {
+    if (isLoading || isError) {
         return (
             <div className="container">
-                <div className="alert alert-danger container" role="alert">
-                    Erreur dans la récupération des données, l'API n'est pas connecté au frontend.
+                { isError && (
+                    <div>
+                        <br/>
+                        <div className="alert alert-danger container" role="alert">
+                            Erreur dans la récupération des données, l'API n'est pas connecté au frontend.
+                        </div>
+                    </div>)
+                }
+                <div className="d-flex justify-content-center align-items-center" style={{height: "80vh"}}>
+                    <div className="spinner-border" role="status"/>
                 </div>
-            </div>
-        )
-    }
-
-    if (isLoading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
-                <div className="spinner-border" role="status" />
             </div>
         );
     }
@@ -128,22 +133,35 @@ function App() {
 
             {/* Modal Popup */}
             {showPopup && (
-                <div className="modal show" style={{ display: "block" }} tabIndex="-1" role="dialog">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Erreur de Réponse</h5>
-                                <button type="button" className="close" onClick={closePopup}>
-                                    <span>&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <p>{popupMessage}</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={closePopup}>Fermer</button>
-                            </div>
-                        </div>
+                <div
+                    onClick={closePopup}
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        backgroundColor: "rgba(142, 22, 22, 0.6)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1050,
+                        cursor: "pointer",
+                    }}
+                >
+                    <div
+                        style={{
+                            backgroundColor: "white",
+                            padding: "20px",
+                            borderRadius: "10px",
+                            textAlign: "center",
+                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                            maxWidth: "500px",
+                            width: "80%",
+                        }}
+                    >
+                        <h5 style={{ color: "red", marginBottom: "15px" }}>Erreur de Réponse</h5>
+                        <p>{popupMessage}</p>
                     </div>
                 </div>
             )}

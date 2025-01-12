@@ -38,7 +38,7 @@ class ChooseSubject(BaseModel):
 
 @app.post('/api/generate')
 async def generate_a_question(subjects: ChooseSubject):
-    return generate_mcq_question(subjects.model_dump())
+    return generate_mcq_question(**subjects.model_dump())
 
 
 try:
@@ -55,4 +55,7 @@ else:
 
 
 if __name__ == '__main__':
+
+    for _ in range(10):
+        print(generate_mcq_question(subjects=['Arithmetic']))
     uvicorn.run(app)

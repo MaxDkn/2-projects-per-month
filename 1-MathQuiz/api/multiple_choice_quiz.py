@@ -178,7 +178,6 @@ class QuestionsMCQ:
         if shuffle_true_or_false_answer:
             #  If this is a True or False answer, there are only two elements in the suggested answer list
             if len(response['suggested_answer']) == 2:
-                print('TOTO')
                 answer = response['suggested_answer'][response['index_answer']]
                 response['suggested_answer'] = shuffle_a_list(response['suggested_answer'])
                 response['index_answer'] = response['suggested_answer'].index(answer)
@@ -573,10 +572,21 @@ class Arithmetic(QuestionsMCQ):
 
     @staticmethod
     def q_is_divisible_by_a_number(interval: tuple = (100, 10_000),
-                                   divisors: tuple = (3, 5, 6, 10, 15)) -> dict:
+                                   divisors: tuple = (3, 5, 6, 7, 10, 15)) -> dict:
         """
         ask if a number is divisible by another one, using the divisible rules with specific numbers.
-
+        The rule for the number 7 is not famous, but I know the trick : 
+        take a number
+        546 => 6*2= 12  multiply by 2 the last digit.
+            => 54 - 12 = 42  remove the result to the rest of the number
+        7 can divide 42 so 7 can also divide 546.
+        Another exemple: 
+        6793 => 3*2 = 6
+             => 679 - 6 = 673
+             673 => 3*2 = 6
+                 => 67 - 6 = 61
+        61 is not a multiple of 7, so 6793 too.
+                
         :param interval: interval of the numbers generated.
         :param divisors: the numbers for which we can ask if a number is divisible by that one
         :return:
@@ -859,7 +869,6 @@ class Trigonometry(QuestionsMCQ):
         trigo_function = choice([(cos, 'cos'), (sin, 'sin')])
         value = choice(self.angles)
         answer = round(trigo_function[0](radians(int(value[:-1]))), 3)
-        print(answer)
         if answer < 0:
             answer = "-" + self.values_into_str[abs(answer)]
         else:
@@ -982,9 +991,7 @@ def generate_mcq_question(subjects: list[str] | str = '*') -> dict:
                     'Geometry': Geometry(),
                     'Algebra': Algebra()
     }
-
-    subjects = [subject for subject in subjects if subject in all_subjects.keys()]
-
+    subjects = [subject for subject in subjects if subject in all_subjects]
     if not subjects:
         subjects = list(all_subjects)
     k = [all_subjects[subject_name].get_number_of_questions() for subject_name in subjects]
